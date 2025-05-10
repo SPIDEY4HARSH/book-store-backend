@@ -9,33 +9,32 @@ const app = express();
 // Middleware for parsing request body
 app.use(express.json());
 
-// Middleware for handling CORS POLICY
-// Option 1: Allow All Origins with Default of cors(*)
-app.use(cors());
-// Option 2: Allow Custom Origins
-// app.use(
-//   cors({
-//     origin: 'http://localhost:3000',
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//     allowedHeaders: ['Content-Type'],
-//   })
-// );
+// ✅ CORS setup to allow only your frontend domain
+app.use(
+  cors({
+    origin: 'https://book-store-backend-two-gamma.vercel.app', // your frontend Vercel URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type'],
+  })
+);
 
+// Test route
 app.get('/', (request, response) => {
-  console.log(request);
-  return response.status(234).send('Welcome To MERN Stack Tutorial');
+  return response.status(200).send('Welcome To MERN Stack Tutorial');
 });
 
+// Book routes
 app.use('/books', booksRoute);
 
+// MongoDB connection and server start
 mongoose
   .connect(mongoDBURL)
   .then(() => {
     console.log('App connected to database');
     app.listen(PORT, () => {
-      console.log(`App is listening to port: ${PORT}`);
+      console.log(`App is listening on port: ${PORT}`);
     });
   })
   .catch((error) => {
-    console.log(error);
+    console.error('Database connection error:', error);
   });
